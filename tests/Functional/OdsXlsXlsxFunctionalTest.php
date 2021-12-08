@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MewesK\TwigSpreadsheetBundle\Tests\Functional;
+
+use Exception;
 
 /**
  * Class OdsXlsXlsxFunctionalTest.
@@ -27,11 +31,11 @@ class OdsXlsXlsxFunctionalTest extends BaseFunctionalTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testSimple($format)
+    public function testSimple(string $format)
     {
         $document = $this->getDocument('test_default', ['templateName' => 'simple', '_format' => $format], $format);
         static::assertNotNull($document, 'Document does not exist');
@@ -49,11 +53,11 @@ class OdsXlsXlsxFunctionalTest extends BaseFunctionalTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testCustomResponse($format)
+    public function testCustomResponse(string $format)
     {
         $response = $this->getResponse('test_custom_response', ['templateName' => 'simple', '_format' => $format]);
 
@@ -65,11 +69,11 @@ class OdsXlsXlsxFunctionalTest extends BaseFunctionalTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testDocumentTemplatePath1($format)
+    public function testDocumentTemplatePath1(string $format)
     {
         $document = $this->getDocument('test_default', ['templateName' => 'documentTemplatePath1', '_format' => $format], $format);
         static::assertNotNull($document, 'Document does not exist');
@@ -86,11 +90,11 @@ class OdsXlsXlsxFunctionalTest extends BaseFunctionalTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testDocumentTemplatePath2($format)
+    public function testDocumentTemplatePath2(string $format)
     {
         $document = $this->getDocument('test_default', ['templateName' => 'documentTemplatePath2', '_format' => $format], $format);
         static::assertNotNull($document, 'Document does not exist');

@@ -2,6 +2,12 @@
 
 namespace MewesK\TwigSpreadsheetBundle\Wrapper;
 
+use RuntimeException;
+use Twig\Environment;
+
+use function is_array;
+use function is_callable;
+
 /**
  * Class BaseWrapper.
  */
@@ -13,7 +19,7 @@ abstract class BaseWrapper
     protected $context;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $environment;
 
@@ -29,10 +35,10 @@ abstract class BaseWrapper
     /**
      * BaseWrapper constructor.
      *
-     * @param array             $context
-     * @param \Twig_Environment $environment
+     * @param array $context
+     * @param Environment $environment
      */
-    public function __construct(array $context, \Twig_Environment $environment)
+    public function __construct(array $context, Environment $environment)
     {
         $this->context = $context;
         $this->environment = $environment;
@@ -84,11 +90,11 @@ abstract class BaseWrapper
     /**
      * Calls the matching mapping callable for each property.
      *
-     * @param array       $properties
-     * @param array|null  $mappings
+     * @param array $properties
+     * @param array|null $mappings
      * @param string|null $column
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function setProperties(array $properties, array $mappings = null, string $column = null)
     {
@@ -98,16 +104,13 @@ abstract class BaseWrapper
 
         foreach ($properties as $key => $value) {
             if (!isset($mappings[$key])) {
-                throw new \RuntimeException(sprintf('Missing mapping for key "%s"', $key));
+                throw new RuntimeException(sprintf('Missing mapping for key "%s"', $key));
             }
 
-            if (\is_array($value) && \is_array($mappings[$key])) {
+            if (is_array($value) && is_array($mappings[$key])) {
                 // recursion
                 if (isset($mappings[$key]['__multi'])) {
                     // handle multi target structure (with columns)
-                    /**
-                     * @var array $value
-                     */
                     foreach ($value as $_column => $_value) {
                         $this->setProperties($_value, $mappings[$key], $_column);
                     }
@@ -115,7 +118,7 @@ abstract class BaseWrapper
                     // handle single target structure
                     $this->setProperties($value, $mappings[$key]);
                 }
-            } elseif (\is_callable($mappings[$key])) {
+            } elseif (is_callable($mappings[$key])) {
                 // call single and multi target mapping
                 // if column is set it is used to get object from the callback in __multi
                 $mappings[$key](
@@ -123,7 +126,7 @@ abstract class BaseWrapper
                     $column !== null ? $mappings['__multi']($column) : null
                 );
             } else {
-                throw new \RuntimeException(sprintf('Invalid mapping for key "%s"', $key));
+                throw new RuntimeException(sprintf('Invalid mapping for key "%s"', $key));
             }
         }
     }

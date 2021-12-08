@@ -1,7 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MewesK\TwigSpreadsheetBundle\Tests\Functional\Fixtures;
 
+use Exception;
+use MewesK\TwigSpreadsheetBundle\MewesKTwigSpreadsheetBundle;
+use MewesK\TwigSpreadsheetBundle\Tests\Functional\Fixtures\TestBundle\TestBundle;
+use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -26,28 +34,28 @@ class TestAppKernel extends Kernel
     public function registerBundles()
     {
         return [
-            new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new \MewesK\TwigSpreadsheetBundle\MewesKTwigSpreadsheetBundle(),
-            new \MewesK\TwigSpreadsheetBundle\Tests\Functional\Fixtures\TestBundle\TestBundle(),
+            new FrameworkBundle(),
+            new TwigBundle(),
+            new SensioFrameworkExtraBundle(),
+            new MewesKTwigSpreadsheetBundle(),
+            new TestBundle(),
         ];
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(sprintf('%s/config/config_%s.yml', $this->rootDir, $this->getEnvironment()));
+        $loader->load(sprintf('%s/config/config_%s.yml', $this->getProjectDir(), $this->getEnvironment()));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->cacheDir;
     }
@@ -63,7 +71,7 @@ class TestAppKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->logDir;
     }

@@ -1,3 +1,7 @@
+## 1.2
+
+ * Add support for Symfony 5
+
 ## 1.1
 
  * Fixed issue #13 'Incorrect cache directory for images' (technetium)

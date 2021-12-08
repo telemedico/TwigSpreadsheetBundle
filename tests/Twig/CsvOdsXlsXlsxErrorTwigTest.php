@@ -2,6 +2,10 @@
 
 namespace MewesK\TwigSpreadsheetBundle\Tests\Twig;
 
+use Exception;
+use Twig\Error\SyntaxError;
+use TypeError;
+
 /**
  * Class CsvOdsXlsXlsxErrorTwigTest.
  */
@@ -22,13 +26,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testDocumentError($format)
+    public function testDocumentError(string $format)
     {
-        $this->expectException(\Twig_Error_Syntax::class);
+        $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('Node "MewesK\TwigSpreadsheetBundle\Twig\Node\DocumentNode" is not allowed inside of Node "MewesK\TwigSpreadsheetBundle\Twig\Node\SheetNode"');
 
         $this->getDocument('documentError', $format);
@@ -37,13 +41,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testDocumentErrorTextAfter($format)
+    public function testDocumentErrorTextAfter(string $format)
     {
-        $this->expectException(\Twig_Error_Syntax::class);
+        $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('Node "Twig_Node_Text" is not allowed after Node "MewesK\TwigSpreadsheetBundle\Twig\Node\DocumentNode"');
 
         $this->getDocument('documentErrorTextAfter', $format);
@@ -52,13 +56,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testDocumentErrorTextBefore($format)
+    public function testDocumentErrorTextBefore(string $format)
     {
-        $this->expectException(\Twig_Error_Syntax::class);
+        $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('Node "Twig_Node_Text" is not allowed before Node "MewesK\TwigSpreadsheetBundle\Twig\Node\DocumentNode"');
 
         $this->getDocument('documentErrorTextBefore', $format);
@@ -67,13 +71,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testStartCellIndexError($format)
+    public function testStartCellIndexError(string $format)
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $this->expectExceptionMessage('Argument 1 passed to MewesK\TwigSpreadsheetBundle\Wrapper\PhpSpreadsheetWrapper::startCell() must be of the type integer');
 
         $this->getDocument('cellIndexError', $format);
@@ -82,13 +86,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testStartRowIndexError($format)
+    public function testStartRowIndexError(string $format)
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $this->expectExceptionMessage('Argument 1 passed to MewesK\TwigSpreadsheetBundle\Wrapper\PhpSpreadsheetWrapper::startRow() must be of the type integer');
 
         $this->getDocument('rowIndexError', $format);
@@ -97,13 +101,13 @@ class CsvOdsXlsXlsxErrorTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
-    public function testSheetError($format)
+    public function testSheetError(string $format)
     {
-        $this->expectException(\Twig_Error_Syntax::class);
+        $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('Node "MewesK\TwigSpreadsheetBundle\Twig\Node\RowNode" is not allowed inside of Node "MewesK\TwigSpreadsheetBundle\Twig\Node\DocumentNode"');
 
         $this->getDocument('sheetError', $format);

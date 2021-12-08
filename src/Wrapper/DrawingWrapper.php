@@ -2,9 +2,15 @@
 
 namespace MewesK\TwigSpreadsheetBundle\Wrapper;
 
+use InvalidArgumentException;
+use LogicException;
 use MewesK\TwigSpreadsheetBundle\Helper\Filesystem;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing;
+use RuntimeException;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Twig\Environment;
 
 /**
  * Class DrawingWrapper.
@@ -32,14 +38,19 @@ class DrawingWrapper extends BaseWrapper
     /**
      * DrawingWrapper constructor.
      *
-     * @param array               $context
-     * @param \Twig_Environment   $environment
-     * @param SheetWrapper        $sheetWrapper
+     * @param array $context
+     * @param Environment $environment
+     * @param SheetWrapper $sheetWrapper
      * @param HeaderFooterWrapper $headerFooterWrapper
-     * @param array             $attributes
+     * @param array $attributes
      */
-    public function __construct(array $context, \Twig_Environment $environment, SheetWrapper $sheetWrapper, HeaderFooterWrapper $headerFooterWrapper, array $attributes = [])
-    {
+    public function __construct(
+        array $context,
+        Environment $environment,
+        SheetWrapper $sheetWrapper,
+        HeaderFooterWrapper $headerFooterWrapper,
+        array $attributes = []
+    ) {
         parent::__construct($context, $environment);
 
         $this->sheetWrapper = $sheetWrapper;
@@ -53,16 +64,16 @@ class DrawingWrapper extends BaseWrapper
      * @param string $path
      * @param array $properties
      *
-     * @throws \Symfony\Component\Filesystem\Exception\IOException
-     * @throws \LogicException
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws IOException
+     * @throws LogicException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws Exception
      */
     public function start(string $path, array $properties = [])
     {
         if ($this->sheetWrapper->getObject() === null) {
-            throw new \LogicException();
+            throw new LogicException();
         }
 
         // create local copy of the asset
@@ -88,7 +99,7 @@ class DrawingWrapper extends BaseWrapper
                     $headerFooterParameters['value'][HeaderFooterWrapper::ALIGNMENT_RIGHT] .= '&G';
                     break;
                 default:
-                    throw new \InvalidArgumentException(sprintf('Unknown alignment type "%s"', $alignment));
+                    throw new InvalidArgumentException(sprintf('Unknown alignment type "%s"', $alignment));
             }
 
             $location .= $headerFooterParameters['baseType'] === HeaderFooterWrapper::BASETYPE_HEADER ? 'H' : 'F';
@@ -97,9 +108,7 @@ class DrawingWrapper extends BaseWrapper
             $this->object->setPath($tempPath);
             $this->headerFooterWrapper->getObject()->addImage($this->object, $location);
             $this->headerFooterWrapper->setParameters($headerFooterParameters);
-        }
-
-        // add to worksheet
+        } // add to worksheet
         else {
             $this->object = new Drawing();
             $this->object->setWorksheet($this->sheetWrapper->getObject());
@@ -137,46 +146,83 @@ class DrawingWrapper extends BaseWrapper
     protected function configureMappings(): array
     {
         return [
-            'coordinates' => function ($value) { $this->object->setCoordinates($value); },
-            'description' => function ($value) { $this->object->setDescription($value); },
-            'height' => function ($value) { $this->object->setHeight($value); },
-            'name' => function ($value) { $this->object->setName($value); },
-            'offsetX' => function ($value) { $this->object->setOffsetX($value); },
-            'offsetY' => function ($value) { $this->object->setOffsetY($value); },
-            'resizeProportional' => function ($value) { $this->object->setResizeProportional($value); },
-            'rotation' => function ($value) { $this->object->setRotation($value); },
+            'coordinates' => function ($value) {
+                $this->object->setCoordinates($value);
+            },
+            'description' => function ($value) {
+                $this->object->setDescription($value);
+            },
+            'height' => function ($value) {
+                $this->object->setHeight($value);
+            },
+            'name' => function ($value) {
+                $this->object->setName($value);
+            },
+            'offsetX' => function ($value) {
+                $this->object->setOffsetX($value);
+            },
+            'offsetY' => function ($value) {
+                $this->object->setOffsetY($value);
+            },
+            'resizeProportional' => function ($value) {
+                $this->object->setResizeProportional($value);
+            },
+            'rotation' => function ($value) {
+                $this->object->setRotation($value);
+            },
             'shadow' => [
-                'alignment' => function ($value) { $this->object->getShadow()->setAlignment($value); },
-                'alpha' => function ($value) { $this->object->getShadow()->setAlpha($value); },
-                'blurRadius' => function ($value) { $this->object->getShadow()->setBlurRadius($value); },
-                'color' => function ($value) { $this->object->getShadow()->getColor()->setRGB($value); },
-                'direction' => function ($value) { $this->object->getShadow()->setDirection($value); },
-                'distance' => function ($value) { $this->object->getShadow()->setDistance($value); },
-                'visible' => function ($value) { $this->object->getShadow()->setVisible($value); },
+                'alignment' => function ($value) {
+                    $this->object->getShadow()->setAlignment($value);
+                },
+                'alpha' => function ($value) {
+                    $this->object->getShadow()->setAlpha($value);
+                },
+                'blurRadius' => function ($value) {
+                    $this->object->getShadow()->setBlurRadius($value);
+                },
+                'color' => function ($value) {
+                    $this->object->getShadow()->getColor()->setRGB($value);
+                },
+                'direction' => function ($value) {
+                    $this->object->getShadow()->setDirection($value);
+                },
+                'distance' => function ($value) {
+                    $this->object->getShadow()->setDistance($value);
+                },
+                'visible' => function ($value) {
+                    $this->object->getShadow()->setVisible($value);
+                },
             ],
-            'width' => function ($value) { $this->object->setWidth($value); },
+            'width' => function ($value) {
+                $this->object->setWidth($value);
+            },
         ];
     }
 
     /**
      * @param string $path
      *
-     * @throws \InvalidArgumentException
-     * @throws \Symfony\Component\Filesystem\Exception\IOException
-     *
      * @return string
+     * @throws IOException
+     *
+     * @throws InvalidArgumentException
      */
     private function createTempCopy(string $path): string
     {
         // create temp path
         $extension = pathinfo($path, PATHINFO_EXTENSION);
-        $tempPath = sprintf('%s/tsb_%s%s', $this->attributes['cache']['bitmap'], md5($path), $extension ? '.'.$extension : '');
+        $tempPath = sprintf(
+            '%s/tsb_%s%s',
+            $this->attributes['cache']['bitmap'],
+            md5($path),
+            $extension ? '.' . $extension : ''
+        );
 
         // create local copy
         if (!Filesystem::exists($tempPath)) {
             $data = file_get_contents($path);
             if ($data === false) {
-                throw new \InvalidArgumentException($path.' does not exist.');
+                throw new InvalidArgumentException($path . ' does not exist.');
             }
             Filesystem::dumpFile($tempPath, $data);
             unset($data);

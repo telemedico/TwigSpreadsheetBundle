@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MewesK\TwigSpreadsheetBundle\Tests\Functional;
 
 use MewesK\TwigSpreadsheetBundle\Helper\Filesystem;
 use MewesK\TwigSpreadsheetBundle\Tests\Functional\Fixtures\TestAppKernel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,14 +30,14 @@ abstract class BaseFunctionalTest extends WebTestCase
     protected static $ENVIRONMENT;
 
     /**
-     * @var Client
+     * @var KernelBrowser
      */
     protected static $client;
 
     /**
      * {@inheritdoc}
      *
-     * @throws \Symfony\Component\Filesystem\Exception\IOException
+     * @throws IOException
      */
     public static function setUpBeforeClass()
     {
@@ -45,7 +49,7 @@ abstract class BaseFunctionalTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected static function getKernelClass()
+    protected static function getKernelClass(): string
     {
         return TestAppKernel::class;
     }
@@ -59,14 +63,14 @@ abstract class BaseFunctionalTest extends WebTestCase
          * @var TestAppKernel $kernel
          */
         $kernel = parent::createKernel($options);
-        $kernel->setCacheDir(sprintf('%s/../../../var/cache/%s', $kernel->getRootDir(), str_replace('\\', DIRECTORY_SEPARATOR, static::class)));
-        $kernel->setLogDir(sprintf('%s/../../../var/logs/%s', $kernel->getRootDir(), str_replace('\\', DIRECTORY_SEPARATOR, static::class)));
+        $kernel->setCacheDir(sprintf('%s/../../../var/cache/%s', $kernel->getProjectDir(), str_replace('\\', DIRECTORY_SEPARATOR, static::class)));
+        $kernel->setLogDir(sprintf('%s/../../../var/logs/%s', $kernel->getProjectDir(), str_replace('\\', DIRECTORY_SEPARATOR, static::class)));
 
         return $kernel;
     }
 
     /**
-     * @throws \Symfony\Component\Filesystem\Exception\IOException
+     * @throws IOException
      */
     public function setUp()
     {
@@ -79,8 +83,8 @@ abstract class BaseFunctionalTest extends WebTestCase
      * @param array $routeParameters
      * @param string $format
      *
-     * @throws \Symfony\Component\Filesystem\Exception\IOException
-     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * @throws IOException
+     * @throws Exception
      *
      * @return Spreadsheet
      */

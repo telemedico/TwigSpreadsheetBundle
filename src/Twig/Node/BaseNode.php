@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MewesK\TwigSpreadsheetBundle\Twig\Node;
 
 use MewesK\TwigSpreadsheetBundle\Wrapper\PhpSpreadsheetWrapper;
+use Twig\Node\Node;
 
 /**
  * Class BaseNode.
  */
-abstract class BaseNode extends \Twig_Node
+abstract class BaseNode extends Node
 {
     /**
      * @var string

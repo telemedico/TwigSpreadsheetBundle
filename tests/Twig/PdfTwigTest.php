@@ -2,6 +2,8 @@
 
 namespace MewesK\TwigSpreadsheetBundle\Tests\Twig;
 
+use Exception;
+
 /**
  * Class PdfTwigTest.
  */
@@ -22,7 +24,7 @@ class PdfTwigTest extends BaseTwigTest
     /**
      * @param string $format
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @dataProvider formatProvider
      */
